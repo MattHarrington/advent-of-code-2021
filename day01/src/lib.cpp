@@ -34,3 +34,21 @@ int part1(const std::vector<int>& depths)
 
     return counter;
 }
+
+int part2(const std::vector<int>& depths)
+{
+    int counter{ 0 };
+
+    for (size_t i{ 2 }; i < depths.size() - 1; ++i)
+    {
+        const int first_window{ depths.at(i - 2) + depths.at(i - 1) + depths.at(i) };
+        const int second_window{ depths.at(i - 1) + depths.at(i) + depths.at(i + 1) };
+
+        if (second_window > first_window)
+        {
+            ++counter;
+        }
+    }
+
+    return counter;
+}

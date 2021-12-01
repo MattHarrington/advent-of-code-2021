@@ -1,7 +1,7 @@
 # Based on https://gitlab.com/CLIUtils/modern-cmake/-/tree/master/examples/extended-project
 
-# Works with 3.12 and tested through 3.21
-cmake_minimum_required(VERSION 3.12...3.21)
+# Works with 3.12 and tested through 3.22
+cmake_minimum_required(VERSION 3.12...3.22)
 message("CMake version: ${CMAKE_VERSION}")
 
 # Project name and a few useful settings. Other commands can pick up the results
@@ -31,7 +31,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 endif()
 
 find_package(fmt CONFIG REQUIRED)
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 # The compiled library code is here
 add_subdirectory(src)

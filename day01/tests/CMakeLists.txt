@@ -14,6 +14,7 @@ add_executable(day01-tests testlib.cpp)
 # I'm using C++17 in the test
 target_compile_features(day01-tests PRIVATE cxx_std_17)
 
+# Should be linked to the main library, as well as the Doctest testing library
 target_link_libraries(day01-tests PRIVATE day01-core doctest::doctest)
 
 if(MSVC)
