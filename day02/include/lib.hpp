@@ -11,4 +11,6 @@ enum class Command
 
 std::vector<std::pair<Command,int>> read_input(const std::string&);
 
-int part1(const std::vector<std::pair<Command,int>>&);
+int part1(const std::vector<std::pair<Command,int>>&) noexcept;
+
+int part2(const std::vector<std::pair<Command,int>>&) noexcept;

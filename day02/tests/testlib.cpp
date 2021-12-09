@@ -28,3 +28,15 @@ TEST_CASE("Part 1 answer with puzzle data should be 1'714'950")
     const auto part1_answer{ part1(puzzle_input) };
     CHECK(part1_answer == 1'714'950);
 }
+
+TEST_CASE("Part 2 answer with sample data should be 900")
+{
+    const auto part2_answer{ part2(sample_input) };
+    CHECK(part2_answer == 900);
+}
+
+TEST_CASE("Part 2 answer with puzzle data should be 1'281'977'850")
+{
+    const auto part2_answer{ part2(puzzle_input) };
+    CHECK(part2_answer == 1'281'977'850);
+}
