@@ -18,10 +18,10 @@ std::vector<int> read_input(const std::string& filename)
     std::string input;
     std::getline(in, input);
 
-    std::stringstream ss(input); //create string stream from the string
+    std::stringstream ss(input);
     while (ss.good()) {
         std::string substr;
-        std::getline(ss, substr, ','); //get first string delimited by comma
+        std::getline(ss, substr, ',');
         positions.push_back(std::stoi(substr));
     }
     return positions;
