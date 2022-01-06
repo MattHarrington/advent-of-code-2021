@@ -8,7 +8,7 @@ message("CMake version: ${CMAKE_VERSION}")
 project(
   day04 
   VERSION 0.1
-  DESCRIPTION "Advent of Code 2020 Day 4"
+  DESCRIPTION "Advent of Code 2021 Day 4"
   LANGUAGES CXX)
 
 # Only do these if this is the main project, and not if it is included through add_subdirectory
