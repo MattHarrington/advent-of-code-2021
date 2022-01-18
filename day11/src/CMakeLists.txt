@@ -10,7 +10,7 @@ add_library(day11-core lib.cpp ${HEADER_LIST})
 # We need this directory, and users of our library will need it too
 target_include_directories(day11-core PUBLIC ../include)
 
-target_link_libraries(day11-core PRIVATE Eigen3::Eigen)
+target_link_libraries(day11-core PUBLIC Eigen3::Eigen)
 
 # All users of this library will need at least C++17
 target_compile_features(day11-core PUBLIC cxx_std_17)

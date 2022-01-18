@@ -9,7 +9,7 @@ ENDIF()
 add_executable(day11 app.cpp)
 target_compile_features(day11 PRIVATE cxx_std_20)
 
-target_link_libraries(day11 PRIVATE day11-core Eigen3::Eigen)
+target_link_libraries(day11 PRIVATE day11-core)
 
 if(MSVC)
     target_compile_options(day11 PRIVATE /external:anglebrackets /external:W0 /analyze:external- /W4 /WX)

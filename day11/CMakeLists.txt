@@ -30,6 +30,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
 endif()
 
+# Using Eigen in this project
 find_package(Eigen3 CONFIG REQUIRED)
 
 # The compiled library code is here
