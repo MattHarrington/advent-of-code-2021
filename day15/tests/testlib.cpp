@@ -5,6 +5,7 @@
 #include "lib.hpp"
 
 const auto sample_input{ read_input("day15_sample_input.txt") };
+const auto sample_input_part2{ read_input("day15_sample_input_part2.txt") };
 const auto puzzle_input{ read_input("day15_input.txt") };
 
 TEST_CASE("Sample input should contain 10 rows")
@@ -35,15 +36,26 @@ TEST_CASE("Part 1 answer with puzzle data should be 361")
     CHECK(part1_answer == 361);
 }
 
+TEST_CASE("expand_grid() should give grid equal to day15_sample_input_part2.txt")
+{
+    const auto expanded_grid{ expand_grid(sample_input) };
+    CHECK(expanded_grid == sample_input_part2);
+}
+
+TEST_CASE("Part 2 answer with day15_sample_input_part2.txt and part1() should be 315")
+{
+    const auto part2_answer{ part1(sample_input_part2) };
+    CHECK(part2_answer == 315);
+}
+
 TEST_CASE("Part 2 answer with sample data should be 315")
 {
     const auto part2_answer{ part2(sample_input) };
     CHECK(part2_answer == 315);
 }
 
-TEST_CASE("Part 2 answer with puzzle data should be 315")
+TEST_CASE("Part 2 answer with puzzle data should be 2838")
 {
     const auto part2_answer{ part2(puzzle_input) };
-    CHECK(part2_answer == 315);
+    CHECK(part2_answer == 2838);
 }
-// 645 too low

@@ -2,9 +2,11 @@ find_package(doctest CONFIG REQUIRED)
 
 IF (WIN32)
     configure_file(../apps/day15_sample_input.txt day15_sample_input.txt NEWLINE_STYLE WIN32)
+    configure_file(../apps/day15_sample_input_part2.txt day15_sample_input_part2.txt NEWLINE_STYLE WIN32)
     configure_file(../apps/day15_input.txt day15_input.txt NEWLINE_STYLE WIN32)
 ELSE ()
     configure_file(../apps/day15_sample_input.txt day15_sample_input.txt NEWLINE_STYLE UNIX)
+    configure_file(../apps/day15_sample_input_part2.txt day15_sample_input_part2.txt NEWLINE_STYLE UNIX)
     configure_file(../apps/day15_input.txt day15_input.txt NEWLINE_STYLE UNIX)
 ENDIF ()
 

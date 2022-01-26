@@ -1,12 +1,11 @@
 #include <algorithm>
 #include <fstream>
-#include <limits>
 #include <queue>
 #include <stdexcept>
 
 #include "lib.hpp"
 
-std::size_t PointHash::operator()(const Point& p) const noexcept
+std::size_t PositionHash::operator()(const Position& p) const noexcept
 {
     const std::size_t h1 = std::hash<size_t>{}(p.x);
     const std::size_t h2 = std::hash<size_t>{}(p.y);
@@ -24,48 +23,48 @@ Graph::Graph(const Grid& g)
     {
         for (size_t x{ 0 }; x < g.front().size(); ++x)
         {
-            Point p{ x, y };
+            Position p{ x, y };
             risk_level_[p] = g[y][x];
             // North neighbor
             if (y > 0)
             {
-                adj_list_[p].emplace_back(Point{ x, y - 1 });
+                adj_list_[p].emplace_back(Position{ x, y - 1 });
             }
             // East neighbor
             if (x < g.front().size() - 1)
             {
-                adj_list_[p].emplace_back(Point{ x + 1, y });
+                adj_list_[p].emplace_back(Position{ x + 1, y });
             }
             // South neighbor
             if (y < g.size() - 1)
             {
-                adj_list_[p].emplace_back(Point{ x, y + 1 });
+                adj_list_[p].emplace_back(Position{ x, y + 1 });
             }
             // West neighbor
             if (x > 0)
             {
-                adj_list_[p].emplace_back(Point{ x - 1, y });
+                adj_list_[p].emplace_back(Position{ x - 1, y });
             }
         }
     }
 }
 
-std::vector<Point> Graph::get_vertices() const
+std::vector<Position> Graph::get_vertices() const
 {
-    std::vector<Point> vertices;
-    for (const auto& kv: adj_list_)
+    std::vector<Position> vertices;
+    for (const auto& kv : adj_list_)
     {
         vertices.emplace_back(kv.first);
     }
     return vertices;
 }
 
-std::vector<Point> Graph::get_neighbors(const Point& p) const
+std::vector<Position> Graph::get_neighbors(const Position& p) const
 {
     return adj_list_.at(p);
 }
 
-int Graph::get_risk_level(const Point& p) const
+int Graph::get_risk_level(const Position& p) const
 {
     return risk_level_.at(p);
 }
@@ -81,7 +80,7 @@ Grid read_input(const std::string& filename)
     while (std::getline(in, line))
     {
         std::vector<int> row;
-        for (const auto c: line)
+        for (const auto c : line)
         {
             row.push_back(c - '0');
         }
@@ -94,33 +93,38 @@ Grid read_input(const std::string& filename)
 int dijkstra_shortest_path(const Grid& grid)
 {
     Graph graph(grid);
-    std::unordered_map<Point, int, PointHash> dist;
-    std::unordered_map<Point, Point, PointHash> prev;
+    std::unordered_map<Position, int, PositionHash> current_risk_level; // Will change throughout computation
+    std::unordered_map<Position, Position, PositionHash> previous_position;
 
-    auto cmp = [&dist](Point left, Point right)
-    { return (dist[left] > dist[right]); };
-    std::priority_queue<Point, std::vector<Point>, decltype(cmp)> min_q(cmp);
+    auto cmp = [](Position left, Position right) { return (left.risk_when_queued > right.risk_when_queued); };
+    std::priority_queue<Position, std::vector<Position>, decltype(cmp)> min_q(cmp);
 
-    for (const auto p: graph.get_vertices())
+    // Initialize min queue
+    for (const auto& v : graph.get_vertices())
     {
-        dist[p] = std::numeric_limits<int>::max(); // Set all distances to "infinity"
-        min_q.push(p);
+        if (v == Position{ 0, 0 }) continue; // Skip starting position
+        current_risk_level[v] = std::numeric_limits<int>::max(); // Set all initial distances to "infinity"
+        min_q.push(v);
     }
 
-    dist[Point{ 0, 0 }] = 0; // Starting point
-    min_q.push(Point{ 0, 0 });
+    current_risk_level[Position{ 0, 0, 0 }] = 0; // Starting position
+    min_q.push(Position{ 0, 0, 0 });
 
+    // Process min queue
     while (!min_q.empty())
     {
         auto u{ min_q.top() };
         min_q.pop();
-        for (const auto& v: graph.get_neighbors(u))
+        if (u.risk_when_queued != current_risk_level.at(u)) continue; // Ignore positions which haven't been updated
+
+        for (auto& v : graph.get_neighbors(u))
         {
-            if (dist[v] > dist[u] + graph.get_risk_level(v))
+            if (current_risk_level.at(v) > current_risk_level.at(u) + graph.get_risk_level(v))
             {
-                dist[v] = dist[u] + graph.get_risk_level(v);
-                prev[v] = u; // Keep track of previous point
-                min_q.push(v);
+                current_risk_level.at(v) = current_risk_level.at(u) + graph.get_risk_level(v);
+                v.risk_when_queued = current_risk_level.at(u) + graph.get_risk_level(v);
+                previous_position[v] = u; // Keep track of previous position
+                min_q.push(v); // Push a new position with updated risk because can't easily modify elements in std::priority_queue
             }
         }
     }
@@ -129,11 +133,11 @@ int dijkstra_shortest_path(const Grid& grid)
     auto total_risk{ 0 };
     auto ending_x{ grid.front().size() - 1 };
     auto ending_y{ grid.size() - 1 };
-    Point point_on_path{ ending_x, ending_y };
-    while (point_on_path != Point{ 0, 0 })
+    Position position{ ending_x, ending_y };
+    while (position != Position{ 0, 0 })
     {
-        total_risk += graph.get_risk_level(point_on_path);
-        point_on_path = prev[point_on_path];
+        total_risk += graph.get_risk_level(position);
+        position = previous_position.at(position);
     }
 
     return total_risk;
@@ -144,21 +148,23 @@ int part1(const Grid& grid)
     return dijkstra_shortest_path(grid);
 }
 
-int part2(Grid grid)
+Grid expand_grid(const Grid& original_grid)
 {
-    const auto original_max_x{ grid.front().size() };
-    const auto original_max_y{ grid.size() };
+    auto expanded_grid{ original_grid };
+    const auto original_max_x{ expanded_grid.front().size() };
+    const auto original_max_y{ expanded_grid.size() };
+
     // Expand to the right
-    for (size_t y{ 0 }; y < grid.size(); ++y)
+    for (size_t y{ 0 }; y < expanded_grid.size(); ++y)
     {
         for (auto i{ 0 }; i < 4; ++i)
         {
-            auto end{ grid[y].size() };
-            auto start{ end - original_max_x };
+            const auto end{ expanded_grid[y].size() };
+            const auto start{ end - original_max_x };
             for (auto x{ start }; x < end; ++x)
             {
-                auto new_value{ grid[y][x] == 9 ? 1 : grid[y][x] + 1 };
-                grid[y].push_back(new_value);
+                auto new_value{ expanded_grid[y][x] == 9 ? 1 : expanded_grid[y][x] + 1 };
+                expanded_grid[y].push_back(new_value);
             }
         }
     }
@@ -166,15 +172,20 @@ int part2(Grid grid)
     // Expand down
     for (auto i{ 0 }; i < 4; ++i)
     {
-        auto end{ grid.size() };
-        auto start{ end - original_max_y };
+        const auto end{ expanded_grid.size() };
+        const auto start{ end - original_max_y };
         for (auto y{ start }; y < end; ++y)
         {
             std::vector<int> new_row;
-            std::transform(grid.at(y).begin(), grid.at(y).end(), std::back_inserter(new_row), [](int a)
-            { return a == 9 ? 1 : a + 1; });
-            grid.emplace_back(new_row);
+            std::transform(expanded_grid.at(y).cbegin(), expanded_grid.at(y).cend(), std::back_inserter(new_row), [](int a) { return a == 9 ? 1 : a + 1; });
+            expanded_grid.emplace_back(new_row);
         }
     }
-    return dijkstra_shortest_path(grid);
+    return expanded_grid;
+}
+
+int part2(Grid grid)
+{
+    const auto expanded_grid{ expand_grid(grid) };
+    return dijkstra_shortest_path(expanded_grid);
 }
