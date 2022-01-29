@@ -96,10 +96,10 @@ int dijkstra_shortest_path(const Grid& grid)
     std::unordered_map<Position, int, PositionHash> current_risk_level; // Will change throughout computation
     std::unordered_map<Position, Position, PositionHash> previous_position;
 
-    auto cmp = [](Position left, Position right) { return (left.risk_when_queued > right.risk_when_queued); };
+    const auto cmp = [](const Position left, const Position right) { return (left.risk_when_queued > right.risk_when_queued); };
     std::priority_queue<Position, std::vector<Position>, decltype(cmp)> min_q(cmp);
 
-    // Initialize min queue
+    // Initialize min queue and risk levels
     for (const auto& v : graph.get_vertices())
     {
         if (v == Position{ 0, 0 }) continue; // Skip starting position
@@ -131,8 +131,8 @@ int dijkstra_shortest_path(const Grid& grid)
 
     // Trace path from end to start and accumulate total_risk
     auto total_risk{ 0 };
-    auto ending_x{ grid.front().size() - 1 };
-    auto ending_y{ grid.size() - 1 };
+    const auto ending_x{ grid.front().size() - 1 };
+    const auto ending_y{ grid.size() - 1 };
     Position position{ ending_x, ending_y };
     while (position != Position{ 0, 0 })
     {
@@ -163,8 +163,8 @@ Grid expand_grid(const Grid& original_grid)
             const auto start{ end - original_max_x };
             for (auto x{ start }; x < end; ++x)
             {
-                auto new_value{ expanded_grid[y][x] == 9 ? 1 : expanded_grid[y][x] + 1 };
-                expanded_grid[y].push_back(new_value);
+                const auto new_value{ expanded_grid[y][x] == 9 ? 1 : expanded_grid[y][x] + 1 };
+                expanded_grid.at(y).push_back(new_value);
             }
         }
     }
@@ -184,7 +184,7 @@ Grid expand_grid(const Grid& original_grid)
     return expanded_grid;
 }
 
-int part2(Grid grid)
+int part2(const Grid& grid)
 {
     const auto expanded_grid{ expand_grid(grid) };
     return dijkstra_shortest_path(expanded_grid);
