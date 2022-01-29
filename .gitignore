@@ -1,4 +1,5 @@
 .idea/
 .vs/
+Folder.DotSettings.user
 out/
 CMakeUserPresets.json
