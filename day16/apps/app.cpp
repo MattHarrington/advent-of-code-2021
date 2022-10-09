@@ -11,9 +11,5 @@ int main()
     std::cout << "Part 1 answer: " << part1_answer << "\n";
     assert(part1_answer == 361);
 
-    const auto part2_answer{ part2(puzzle_input) };
-    std::cout << "Part 2 answer: " << part2_answer << "\n";
-    assert(part2_answer == 2838);
-
     return 0;
 }

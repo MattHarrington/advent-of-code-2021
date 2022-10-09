@@ -1,6 +1,6 @@
 # Based on https://gitlab.com/CLIUtils/modern-cmake/-/blob/master/examples/extended-project/tests/CMakeLists.txt
 
-find_package(catch2 CONFIG REQUIRED)
+find_package(Catch2 3 CONFIG REQUIRED)
 
 IF (WIN32)
     configure_file(../apps/day16_sample_input.txt day16_sample_input.txt NEWLINE_STYLE WIN32)
@@ -23,7 +23,7 @@ else ()
 endif ()
 
 # Should be linked to the main library, as well as Catch2
-target_link_libraries(day16-tests PRIVATE day16-core Catch2::Catch2)
+target_link_libraries(day16-tests PRIVATE day16-core Catch2::Catch2WithMain)
 
 # Discover tests
 include(Catch)
