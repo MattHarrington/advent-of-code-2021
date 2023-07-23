@@ -3,3 +3,4 @@
 Folder.DotSettings.user
 out/
 CMakeUserPresets.json
+cmake-build-debug/
